@@ -1,5 +1,7 @@
 package orderbook
 
+import "fmt"
+
 type Orderbook struct {
 	Ask []*Order
 	Bid []*Order
@@ -10,25 +12,35 @@ func New() *Orderbook {
 }
 
 func (orderbook *Orderbook) MinAsk() *Order {
-	minask := orderbook.Ask[0].Price
+	minask := uint64(1000000000000000000)
 	minOrder := &Order{}
+	flag := false
 	for _, i := range orderbook.Ask {
 		if i.Price <= minask {
 			minask = i.Price
 			minOrder = i
+			flag = true
 		}
+	}
+	if !flag {
+		return nil
 	}
 	return minOrder
 }
 
 func (orderbook *Orderbook) MinLimitedAsk(price uint64) *Order {
-	minask := orderbook.Ask[0].Price
+	minask := uint64(1000000000000000000)
 	minOrder := &Order{}
+	flag := false
 	for _, i := range orderbook.Ask {
-		if i.Price <= minask && i.Price >= price {
+		if i.Price < minask && i.Price <= price {
 			minask = i.Price
 			minOrder = i
+			flag = true
 		}
+	}
+	if !flag {
+		return nil
 	}
 	return minOrder
 }
@@ -36,11 +48,16 @@ func (orderbook *Orderbook) MinLimitedAsk(price uint64) *Order {
 func (orderbook *Orderbook) MaxBid() *Order {
 	maxbid := uint64(0)
 	maxOrder := &Order{}
-	for _, i := range orderbook.Ask {
+	flag := false
+	for _, i := range orderbook.Bid {
 		if i.Price > maxbid {
 			maxbid = i.Price
 			maxOrder = i
+			flag = true
 		}
+	}
+	if !flag {
+		return nil
 	}
 	return maxOrder
 }
@@ -48,11 +65,16 @@ func (orderbook *Orderbook) MaxBid() *Order {
 func (orderbook *Orderbook) MaxLimitedBid(price uint64) *Order {
 	maxbid := uint64(0)
 	maxOrder := &Order{}
-	for _, i := range orderbook.Ask {
-		if i.Price > maxbid && i.Price <= price {
+	flag := false
+	for _, i := range orderbook.Bid {
+		if i.Price > maxbid && i.Price >= price {
 			maxbid = i.Price
 			maxOrder = i
+			flag = true
 		}
+	}
+	if !flag {
+		return nil
 	}
 	return maxOrder
 }
@@ -79,49 +101,51 @@ func (orderbook *Orderbook) Delete(order *Order) *Orderbook {
 }
 
 func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
-	trade := *&[]*Trade{}
+	fmt.Println("start", orderbook)
+	var trade []*Trade
 	if order.Side == SideBid {
-
 		for order.Volume != 0 && len(orderbook.Ask) != 0 {
-
 			if order.Kind == KindMarket {
 				i := orderbook.MinAsk()
-
 				if i == nil {
 					orderbook.Bid = append(orderbook.Bid, order)
-					return trade, order
+					return nil, nil
 				}
 
-				if i.Volume >= order.Volume {
+				if i.Volume > order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					i.Volume -= order.Volume
-					return trade, order
+					return trade, nil
+				} else if i.Volume == order.Volume {
+					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
+					orderbook = orderbook.Delete(i)
+					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
 					order.Volume -= i.Volume
 					orderbook = orderbook.Delete(i)
-					orderbook.Match(order)
 				}
 
 			}
 
 			if order.Kind == KindLimit {
 				i := orderbook.MinLimitedAsk(order.Price)
-
 				if i == nil {
 					orderbook.Bid = append(orderbook.Bid, order)
-					return trade, order
+					return nil, nil
 				}
-
-				if i.Volume >= order.Volume {
+				if i.Volume > order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					i.Volume -= order.Volume
-					return trade, order
+					return trade, nil
+				} else if i.Volume == order.Volume {
+					orderbook = orderbook.Delete(i)
+					trade = append(trade, &Trade{i, order, order.Volume, i.Price})
+					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
 					order.Volume -= i.Volume
 					orderbook = orderbook.Delete(i)
-					orderbook.Match(order)
 				}
 
 			}
@@ -131,8 +155,6 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 		if len(orderbook.Ask) == 0 {
 			orderbook.Bid = append(orderbook.Bid, order)
 		}
-
-		return trade, order
 	}
 
 	if order.Side == SideAsk {
@@ -140,42 +162,47 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 
 			if order.Kind == KindMarket {
 				i := orderbook.MaxBid()
-
 				if i == nil {
 					orderbook.Ask = append(orderbook.Ask, order)
-					return trade, order
+					return nil, nil
 				}
-
-				if i.Volume >= order.Volume {
+				if i.Volume > order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					i.Volume -= order.Volume
-					return trade, order
+					return trade, nil
+				} else if i.Volume == order.Volume {
+					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
+					orderbook = orderbook.Delete(i)
+					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
 					order.Volume -= i.Volume
 					orderbook = orderbook.Delete(i)
-					orderbook.Match(order)
 				}
 
 			}
 
 			if order.Kind == KindLimit {
 				i := orderbook.MaxLimitedBid(order.Price)
-
 				if i == nil {
 					orderbook.Ask = append(orderbook.Ask, order)
-					return trade, order
+					return nil, nil
 				}
 
-				if i.Volume >= order.Volume {
+				if i.Volume > order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					i.Volume -= order.Volume
-					return trade, order
+					return trade, nil
+				} else if i.Volume == order.Volume {
+					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
+					fmt.Println(orderbook)
+					orderbook = orderbook.Delete(i)
+					fmt.Println(orderbook)
+					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
 					order.Volume -= i.Volume
 					orderbook = orderbook.Delete(i)
-					orderbook.Match(order)
 				}
 
 			}
@@ -183,11 +210,8 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 		}
 
 		if len(orderbook.Bid) == 0 {
-			orderbook.Bid = append(orderbook.Ask, order)
+			orderbook.Ask = append(orderbook.Ask, order)
 		}
-
-		return trade, order
 	}
-
-	return trade, order
+	return trade, nil
 }
