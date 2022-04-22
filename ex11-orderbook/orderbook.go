@@ -1,7 +1,5 @@
 package orderbook
 
-import "fmt"
-
 type Orderbook struct {
 	Ask []*Order
 	Bid []*Order
@@ -102,7 +100,6 @@ func (orderbook *Orderbook) Delete(order *Order) *Orderbook {
 
 func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 	var trade []*Trade
-	fmt.Println("start", orderbook)
 	if order.Side == SideBid {
 		for order.Volume != 0 && len(orderbook.Ask) != 0 {
 			if order.Kind == KindMarket {
@@ -154,7 +151,6 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 
 		if len(orderbook.Ask) == 0 {
 			orderbook.Bid = append(orderbook.Bid, order)
-			fmt.Println("1")
 		}
 	}
 
@@ -174,7 +170,6 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 				} else if i.Volume == order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					orderbook = orderbook.Delete(i)
-					fmt.Println("7")
 					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
@@ -194,19 +189,15 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 				if i.Volume > order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					i.Volume -= order.Volume
-					fmt.Println("5")
 					return trade, nil
 				} else if i.Volume == order.Volume {
 					trade = append(trade, &Trade{order, i, order.Volume, i.Price})
 					orderbook = orderbook.Delete(i)
-					fmt.Println("2")
-					fmt.Println(orderbook)
 					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
 					order.Volume -= i.Volume
 					orderbook = orderbook.Delete(i)
-					fmt.Println("3")
 				}
 
 			}
@@ -215,9 +206,7 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 
 		if len(orderbook.Bid) == 0 {
 			orderbook.Ask = append(orderbook.Ask, order)
-			fmt.Println("4")
 		}
 	}
-	fmt.Println("6")
 	return trade, nil
 }
