@@ -6,135 +6,135 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-/*func TestLimit_Bid_NoMatch(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 10000, 60000000).
-		OrderLimit(SideBid, 10000, 10000000).
-		Assert(t)
-}
+// func TestLimit_Bid_NoMatch(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 10000, 60000000).
+// 		OrderLimit(SideBid, 10000, 10000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Ask_NoMatch(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 10000, 10000000).
-		OrderLimit(SideAsk, 10000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Ask_NoMatch(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 10000, 10000000).
+// 		OrderLimit(SideAsk, 10000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Bid_ExactMatch(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 10000, 60000000).
-		OrderLimit(SideBid, 10000, 60000000).
-		Trade(10000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Bid_ExactMatch(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 10000, 60000000).
+// 		OrderLimit(SideBid, 10000, 60000000).
+// 		Trade(10000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Ask_ExactMatch(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 10000, 60000000).
-		OrderLimit(SideAsk, 10000, 60000000).
-		Trade(10000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Ask_ExactMatch(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 10000, 60000000).
+// 		OrderLimit(SideAsk, 10000, 60000000).
+// 		Trade(10000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Bid_SamePricePoint(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 15000, 60000000).
-		OrderLimit(SideAsk, 25000, 60001000).
-		OrderLimit(SideBid, 15000, 60002000).
-		OrderLimit(SideBid, 10000, 60003000).
-		Trade(15000, 60001000).
-		Trade(10000, 60001000).
-		Assert(t)
-}
+// func TestLimit_Bid_SamePricePoint(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 15000, 60000000).
+// 		OrderLimit(SideAsk, 25000, 60001000).
+// 		OrderLimit(SideBid, 15000, 60002000).
+// 		OrderLimit(SideBid, 10000, 60003000).
+// 		Trade(15000, 60001000).
+// 		Trade(10000, 60001000).
+// 		Assert(t)
+// }
 
-func TestLimit_Bid_PartialMatch(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 20000, 60000000).
-		OrderLimit(SideBid, 10000, 60000000).
-		OrderLimit(SideBid, 10000, 60000000).
-		Trade(10000, 60000000).
-		Trade(10000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Bid_PartialMatch(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 20000, 60000000).
+// 		OrderLimit(SideBid, 10000, 60000000).
+// 		OrderLimit(SideBid, 10000, 60000000).
+// 		Trade(10000, 60000000).
+// 		Trade(10000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Bid_PartialMatch_Rest(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 14000, 60000000).
-		OrderLimit(SideAsk, 15000, 60000000).
-		OrderLimit(SideBid, 30000, 60000000).
-		Trade(14000, 60000000).
-		Trade(15000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Bid_PartialMatch_Rest(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 14000, 60000000).
+// 		OrderLimit(SideAsk, 15000, 60000000).
+// 		OrderLimit(SideBid, 30000, 60000000).
+// 		Trade(14000, 60000000).
+// 		Trade(15000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Ask_PartialMatch_Rest(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 14000, 60000000).
-		OrderLimit(SideBid, 15000, 60000000).
-		OrderLimit(SideAsk, 30000, 60000000).
-		Trade(14000, 60000000).
-		Trade(15000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Ask_PartialMatch_Rest(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 14000, 60000000).
+// 		OrderLimit(SideBid, 15000, 60000000).
+// 		OrderLimit(SideAsk, 30000, 60000000).
+// 		Trade(14000, 60000000).
+// 		Trade(15000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Bid_PartialMatch_DifferentPrices(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 15000, 60000000).
-		OrderLimit(SideAsk, 15000, 61000000).
-		OrderLimit(SideAsk, 15000, 61100000).
-		OrderLimit(SideBid, 45000, 62000000).
-		Trade(15000, 60000000).
-		Trade(15000, 61000000).
-		Trade(15000, 61100000).
-		Assert(t)
-}
+// func TestLimit_Bid_PartialMatch_DifferentPrices(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 15000, 60000000).
+// 		OrderLimit(SideAsk, 15000, 61000000).
+// 		OrderLimit(SideAsk, 15000, 61100000).
+// 		OrderLimit(SideBid, 45000, 62000000).
+// 		Trade(15000, 60000000).
+// 		Trade(15000, 61000000).
+// 		Trade(15000, 61100000).
+// 		Assert(t)
+// }
 
-func TestLimit_Ask_PartialMatch_DifferentPrices(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 15000, 60000000).
-		OrderLimit(SideBid, 15000, 61000000).
-		OrderLimit(SideBid, 15000, 61100000).
-		OrderLimit(SideAsk, 45000, 60000000).
-		Trade(15000, 61100000).
-		Trade(15000, 61000000).
-		Trade(15000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Ask_PartialMatch_DifferentPrices(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 15000, 60000000).
+// 		OrderLimit(SideBid, 15000, 61000000).
+// 		OrderLimit(SideBid, 15000, 61100000).
+// 		OrderLimit(SideAsk, 45000, 60000000).
+// 		Trade(15000, 61100000).
+// 		Trade(15000, 61000000).
+// 		Trade(15000, 60000000).
+// 		Assert(t)
+// }
 
-func TestLimit_Bid_ExactMatch_Search(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 10000, 61000000).
-		OrderLimit(SideAsk, 10000, 60000000).
-		OrderLimit(SideBid, 10000, 60000000).
-		Trade(10000, 60000000).
-		Assert(t)
-}
+// func TestLimit_Bid_ExactMatch_Search(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 10000, 61000000).
+// 		OrderLimit(SideAsk, 10000, 60000000).
+// 		OrderLimit(SideBid, 10000, 60000000).
+// 		Trade(10000, 60000000).
+// 		Assert(t)
+// }
 
-func TestMarket_Bid(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 10000, 61000000).
-		OrderLimit(SideAsk, 10000, 60000000).
-		OrderMarket(SideBid, 10000).
-		Trade(10000, 60000000).
-		Assert(t)
-}
+// func TestMarket_Bid(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 10000, 61000000).
+// 		OrderLimit(SideAsk, 10000, 60000000).
+// 		OrderMarket(SideBid, 10000).
+// 		Trade(10000, 60000000).
+// 		Assert(t)
+// }
 
-func TestMarket_Bid_Reject(t *testing.T) {
-	new(testcase).
-		OrderMarket(SideBid, 10000).
-		Reject(1, 10000).
-		Assert(t)
-}
+// func TestMarket_Bid_Reject(t *testing.T) {
+// 	new(testcase).
+// 		OrderMarket(SideBid, 10000).
+// 		Reject(1, 10000).
+// 		Assert(t)
+// }
 
-func TestMarket_Bid_Reject_PartialMatch(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 5000, 60000000).
-		OrderLimit(SideAsk, 10000, 60001000).
-		OrderMarket(SideBid, 15000).
-		Trade(10000, 60001000).
-		Reject(3, 5000).
-		Assert(t)
-}
+// func TestMarket_Bid_Reject_PartialMatch(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 5000, 60000000).
+// 		OrderLimit(SideAsk, 10000, 60001000).
+// 		OrderMarket(SideBid, 15000).
+// 		Trade(10000, 60001000).
+// 		Reject(3, 5000).
+// 		Assert(t)
+// }
 
 func TestMarket_Bid_AfterPreviousPositionClosed(t *testing.T) {
 	new(testcase).
@@ -146,7 +146,7 @@ func TestMarket_Bid_AfterPreviousPositionClosed(t *testing.T) {
 		Trade(2000, 55630000).
 		Reject(4, 6000).
 		Assert(t)
-}*/
+}
 
 func TestMarket_Ask_AfterPreviousPositionClosed(t *testing.T) {
 	new(testcase).
@@ -160,44 +160,43 @@ func TestMarket_Ask_AfterPreviousPositionClosed(t *testing.T) {
 		Assert(t)
 }
 
-/*
-func TestMarket_Bid_LowestPriceFirst(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 1000, 50000000).
-		OrderLimit(SideAsk, 5000, 51000000).
-		OrderMarket(SideBid, 3000).
-		Trade(1000, 50000000).
-		Trade(2000, 51000000).
-		Assert(t)
-}
+// func TestMarket_Bid_LowestPriceFirst(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 1000, 50000000).
+// 		OrderLimit(SideAsk, 5000, 51000000).
+// 		OrderMarket(SideBid, 3000).
+// 		Trade(1000, 50000000).
+// 		Trade(2000, 51000000).
+// 		Assert(t)
+// }
 
-func TestMarket_Bid_LowestPriceFirst_SamePricePoint(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideAsk, 1000, 50001000).
-		OrderLimit(SideAsk, 5000, 50002000).
-		OrderMarket(SideBid, 3000).
-		Trade(1000, 50001000).
-		Trade(2000, 50002000).
-		Assert(t)
-}
+// func TestMarket_Bid_LowestPriceFirst_SamePricePoint(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideAsk, 1000, 50001000).
+// 		OrderLimit(SideAsk, 5000, 50002000).
+// 		OrderMarket(SideBid, 3000).
+// 		Trade(1000, 50001000).
+// 		Trade(2000, 50002000).
+// 		Assert(t)
+// }
 
-func TestMarket_Ask_HighestPriceFirst(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 1000, 50000000).
-		OrderLimit(SideBid, 5000, 51000000).
-		OrderMarket(SideAsk, 3000).
-		Trade(3000, 51000000).
-		Assert(t)
-}
+// func TestMarket_Ask_HighestPriceFirst(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 1000, 50000000).
+// 		OrderLimit(SideBid, 5000, 51000000).
+// 		OrderMarket(SideAsk, 3000).
+// 		Trade(3000, 51000000).
+// 		Assert(t)
+// }
 
-func TestMarket_Ask_HighestPriceFirst_SamePricePoint(t *testing.T) {
-	new(testcase).
-		OrderLimit(SideBid, 1000, 50001000).
-		OrderLimit(SideBid, 5000, 50002000).
-		OrderMarket(SideAsk, 3000).
-		Trade(3000, 50002000).
-		Assert(t)
-}*/
+// func TestMarket_Ask_HighestPriceFirst_SamePricePoint(t *testing.T) {
+// 	new(testcase).
+// 		OrderLimit(SideBid, 1000, 50001000).
+// 		OrderLimit(SideBid, 5000, 50002000).
+// 		OrderMarket(SideAsk, 3000).
+// 		Trade(3000, 50002000).
+// 		Assert(t)
+// }
 
 type testcase struct {
 	Orders  []*Order

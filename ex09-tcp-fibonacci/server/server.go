@@ -49,16 +49,15 @@ func handleConnection(conn net.Conn, m map[string]*big.Int) {
 		}
 		if ok {
 			start1 := time.Now()
-			fmt.Println(source, "-", val)
+			fmt.Printf("cache: %v", val)
 			finish1 := time.Since(start1)
-			conn.Write([]byte(finish1.String() + "\n" + val.String()))
+			conn.Write([]byte(finish1.String() + " " + val.String()))
 		} else {
 			start := time.Now()
 			target := Fib(source).String()
 			finish := time.Since(start)
 			m[source] = Fib(source)
-			fmt.Println(source, "-", target)
-			conn.Write([]byte(finish.String() + "\n" + target))
+			conn.Write([]byte(finish.String() + " " + target))
 		}
 	}
 }

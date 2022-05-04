@@ -138,6 +138,7 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 				} else if i.Volume == order.Volume {
 					orderbook = orderbook.Delete(i)
 					trade = append(trade, &Trade{i, order, order.Volume, i.Price})
+					orderbook = New()
 					return trade, nil
 				} else {
 					trade = append(trade, &Trade{order, i, i.Volume, i.Price})
@@ -151,6 +152,9 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 
 		if len(orderbook.Ask) == 0 {
 			orderbook.Bid = append(orderbook.Bid, order)
+			if order.Kind == KindMarket {
+				return trade, order
+			}
 		}
 	}
 
@@ -206,6 +210,9 @@ func (orderbook *Orderbook) Match(order *Order) ([]*Trade, *Order) {
 
 		if len(orderbook.Bid) == 0 {
 			orderbook.Ask = append(orderbook.Ask, order)
+			if order.Kind == KindMarket {
+				return trade, order
+			}
 		}
 	}
 	return trade, nil
